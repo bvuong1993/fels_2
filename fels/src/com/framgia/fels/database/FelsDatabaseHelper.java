@@ -8,7 +8,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
+import com.framgia.fels.models.Answer;
 import com.framgia.fels.models.Category;
 import com.framgia.fels.models.Lesson;
 import com.framgia.fels.models.User;
@@ -184,15 +186,14 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		return result;
 	}
 	
-	public List<Lesson> getLessonListForHome(User user){
+public List<Lesson> getLessonListForHome(User user){
 		
 		List<Lesson> lessonList = new ArrayList<Lesson>();
 		SQLiteDatabase db = this.getReadableDatabase();
 		int userId = user.getId();
 		List<User> userList = new ArrayList<User>();
 		
-		Cursor res =  db.rawQuery( "select * from " + Variables.TABLE_LESSONS + " where " + Variables.COLUMN_LESSONS_USER_ID + " in " + " ( select " + Variables.COLUMN_FOLLOW_FOLLOWED_ID + " from " + Variables.TABLE_FOLLOW + " where " + Variables.COLUMN_FOLLOW_FOLLOWING_ID + " = " + userId + ")", null );
-		System.out.println(res.getCount()+"AAAAAAAAAAA");
+		Cursor res =  db.rawQuery( "select * from " + Variables.TABLE_LESSONS + " where " + Variables.COLUMN_LESSONS_USER_ID + " in " + " ( select " + Variables.COLUMN_FOLLOW_FOLLOWED_ID + " from " + Variables.TABLE_FOLLOW + " where " + Variables.COLUMN_FOLLOW_FOLLOWING_ID + " = " + userId + ")", null );	
 		res.moveToFirst();
 		
 		if(res.getCount() > 0)
@@ -314,6 +315,7 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 	
 	/*SUa String --> category sau*/
 	public List<String> getCategoryList(){
+
 		List<String> categoryList = new ArrayList<String>();
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor res = db.rawQuery("select * from " + Variables.TABLE_CATEGORIES, null);
@@ -321,6 +323,25 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		if( res.getCount() > 0)
 			do{
 				String category = res.getString(res.getColumnIndex(Variables.COLUMN_CATEGORIES_NAME));
+				categoryList.add(category);
+			} while(res.moveToNext());
+		return categoryList;
+	}
+	
+	public List<Category> getCategoryListInClass(){
+
+		List<Category> categoryList = new ArrayList<Category>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res = db.rawQuery("select * from " + Variables.TABLE_CATEGORIES, null);
+		res.moveToFirst();
+		if( res.getCount() > 0)
+			do{
+				int id = res.getInt(res.getColumnIndex(Variables.COLUMN_CATEGORIES_ID));
+				String categoryName = res.getString(res.getColumnIndex(Variables.COLUMN_CATEGORIES_NAME));
+				Category category = new Category();
+				category.setCategoryId(id);
+				category.setCategoryName(categoryName);
+				
 				categoryList.add(category);
 			} while(res.moveToNext());
 		return categoryList;
@@ -394,6 +415,36 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 				word.setVnMeaning(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_VN_MEANING)));
 				wordList.add(word);
 			} while(res.moveToNext());
+		res.close();
+		return wordList;
+	}	
+
+	public List<Word> getWordListForCategory( Category category, int n, boolean randomed){
+		List<Word> wordList = new ArrayList<Word>();
+		SQLiteDatabase db = this.getReadableDatabase();
+//		Cursor res = db.rawQuery("select * from " + Variables.TABLE_WORDS + " inner join categories on " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_CATEGORY_ID 
+//				+ " = " + Variables.TABLE_CATEGORIES + "." + Variables.COLUMN_CATEGORIES_ID + " where " + Variables.TABLE_CATEGORIES+ "." + Variables.COLUMN_CATEGORIES_NAME + " = '" + category.getCategoryName() +"'", null);
+//		String query = "select * from " + Variables.TABLE_WORDS + " where " + Variables.COLUMN_WORDS_CATEGORY_ID 
+//				+ " = '" + category.getCategoryId() + "'";
+//		if (randomed)
+//			query += " order by random()";
+//		if (n > 0)
+//			query += " limit " + n;
+		//Cursor res = db.rawQuery(query, null);
+		String [] selectArgs = {" " + category.getCategoryId()};
+		Cursor res = db.query(Variables.TABLE_WORDS, null, Variables.COLUMN_WORDS_CATEGORY_ID + " = ?", selectArgs,
+				null, null, "random()", (n > 0)? "" + n: null);
+		
+		res.moveToFirst();
+		if( res.getCount() > 0)
+			do{
+				Word word = new Word();
+				word.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_WORDS_ID)));
+				word.setJpWord(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_JP_WORD)));
+				word.setVnMeaning(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_VN_MEANING)));
+				wordList.add(word);
+			} while(res.moveToNext());
+		res.close();
 		return wordList;
 	}
 	
@@ -404,5 +455,21 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 				+ " where " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_USER_ID + " = '" + user.getId() + "'", null);
 		//res.moveToFirst();
 		return res.getCount();
+	}
+	
+	public List<Answer> getAnswerListForWord(Word word) {
+		// FAKED ONE
+		List<Answer> answers = new ArrayList<Answer>();
+		
+		// DEFAULT RESULT : 3
+		word.setResultId(3);
+		for (int i = 0; i < 5; i++) {
+			Answer ans = new Answer();
+			ans.setChoice_id(i);
+			ans.setContent("sample answer content" + i);
+			ans.setWord(word);
+			answers.add(ans);		
+		}
+		return answers;
 	}
 }

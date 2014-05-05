@@ -8,5 +8,13 @@
     <string name="to_words_button_name">Words</string>
     <string name="to_lesson_button_name">Lesson</string>
     <string name="title_activity_category">Category</string>
-	<string name="NONE"></string>
+    <string name="title_activity_word_list">WordListActivity</string>
+    <string name="learned_string">learned</string>
+    <string name="not_learned_string">not learned</string>
+    <string name="all_string">All</string>
+    <string name="category_string">Category:</string>
+    <string name="search_button_label">Search</string>
+    <string name="temp_string">"text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text text "</string>
+    <string name="start_string">Start</string>
+    <string name="title_activity_lesson">LessonActivity</string>
 </resources>

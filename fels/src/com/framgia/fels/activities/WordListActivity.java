@@ -56,9 +56,7 @@ public class WordListActivity extends Activity{
 	}
 	
 	class categoryAsyncTask extends AsyncTask<Void, Void, List<String>>{
-		
-		
-
+					
 		@Override
 		protected void onPreExecute() {
 			// TODO Auto-generated method stub
@@ -121,6 +119,16 @@ public class WordListActivity extends Activity{
 			
 			
 			if( selectedRadioButton.getText().toString().compareTo("all") == 0){
+				
+//				FelsDatabaseHelper database = new FelsDatabaseHelper(WordListActivity.this);
+				
+//				database.insertWords(1, "jpWord1", "vnMeaning1", 0, "sound1", 1);
+//				database.insertWords(2, "jpWord2", "vnMeaning2", 0, "sound2", 1);
+//				database.insertWords(3, "jpWord3", "vnMeaning3", 0, "sound3", 1);
+//				database.insertWords(4, "jpWord4", "vnMeaning4", 0, "sound4", 1);
+//				database.insertWords(5, "jpWord5", "vnMeaning5", 0, "sound5", 2);
+//				database.insertWords(6, "jpWord6", "vnMeaning6", 0, "sound6", 2);				
+				
 				wordList = database.getWordList(categorySpinner.getSelectedItem().toString());
 			} else if( selectedRadioButton.getText().toString().compareTo("learned") == 0){
 				wordList = database.getLearnedWordList(categorySpinner.getSelectedItem().toString(), database.getUser(1));

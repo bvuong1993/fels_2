@@ -1,6 +1,11 @@
 package com.framgia.fels.activities;
 
+import java.util.Iterator;
+import java.util.List;
+
 import com.example.fels.R;
+import com.framgia.fels.database.FelsDatabaseHelper;
+import com.framgia.fels.models.Lesson;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -16,9 +21,19 @@ public class HomeActivity extends Activity {
 		setContentView(R.layout.activity_home);
 		
 		ListView lessonViews = (ListView) findViewById(R.id.recent_activities_listview);
-		String array[] = {"vuong", "vuong2", "vuong3"};
+		FelsDatabaseHelper database = new FelsDatabaseHelper(this);
+		List<Lesson> lessons = database.getLessonListForHome(database.getUser(1));
 		
-		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, R.layout.home_lesson_view, array);
+		String[] lessonStrings = new String[lessons.size()];
+		
+		
+		int i =0;
+		for (Iterator<Lesson> iter = lessons.iterator(); iter.hasNext(); i++) {
+			Lesson lesson = iter.next();
+			lessonStrings[i] = "learn at " + lesson.getDate().toString();
+		}
+				
+		ArrayAdapter<String> mAdapter = new ArrayAdapter<String>(this, R.layout.home_lesson_view, lessonStrings);
 		lessonViews.setAdapter(mAdapter);
 	}
 

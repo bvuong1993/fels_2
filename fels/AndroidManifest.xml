@@ -5,8 +5,8 @@
     android:versionName="1.0" >
 
     <uses-sdk
-        android:minSdkVersion="11"
-        android:targetSdkVersion="16" />
+        android:minSdkVersion="8"
+        android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
@@ -22,8 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
-            android:name="com.framgia.fels.activities.DatabaseTest">            
+        <activity android:name="com.framgia.fels.activities.DatabaseTest" >
         </activity>
         <activity
             android:name="com.framgia.fels.activities.HomeActivity"
@@ -33,12 +32,13 @@
             android:name="com.framgia.fels.activities.CategoryActivity"
             android:label="@string/title_activity_category" >
         </activity>
-        <activity
-            android:name="com.framgia.fels.activities.ShowUserDetailActivity">
+        <activity android:name="com.framgia.fels.activities.ShowUserDetailActivity" >
         </activity>
-        
-        <activity 
-            android:name="com.framgia.fels.activities.WordListActivity">
+        <activity android:name="com.framgia.fels.activities.WordListActivity" >
+        </activity>
+        <activity
+            android:name="com.framgia.fels.activities.LessonActivity"
+            android:label="@string/title_activity_lesson" >
         </activity>
     </application>
 

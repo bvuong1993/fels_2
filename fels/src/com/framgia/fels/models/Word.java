@@ -4,11 +4,11 @@ public class Word {
 	private int id;
 	private String jpWord;
 	private String vnMeaning;
-	/*
+	
 	private int resultId;
 	private String sound;
 	private int categoryId;
-	*/
+	
 	public int getId() {
 		return id;
 	}
@@ -27,7 +27,10 @@ public class Word {
 	public void setVnMeaning(String vnMeaning) {
 		this.vnMeaning = vnMeaning;
 	}
-	/*
+	public String toString() {
+		return "has _id_ " + id + " _jpword_ " + jpWord + " _vnmeaning_ " + vnMeaning;
+	}
+	
 	public int getResultId() {
 		return resultId;
 	}
@@ -45,6 +48,6 @@ public class Word {
 	}
 	public void setCategoryId(int categoryId) {
 		this.categoryId = categoryId;
-	}*/
+	}
 	
 }
