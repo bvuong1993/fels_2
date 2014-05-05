@@ -52,7 +52,7 @@ public class Variables {
 	public static final String COLUMN_LESSONS_ID = "id";
 	public static final String COLUMN_LESSONS_USER_ID = "user_id";
 	public static final String COLUMN_LESSONS_DATE = "date";
-	public static final String COLUMN_LESSOND_CATEGORY_ID = "categoryId";
+	public static final String COLUMN_LESSONS_CATEGORY_ID = "categoryId";
 	
 	//table lesson_results
 	public static final String COLUMN_LESSON_RESULTS_ID = "id";
