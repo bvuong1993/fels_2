@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="15" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,14 @@
         </activity>
         <activity 
             android:name="com.framgia.fels.activities.DatabaseTest">            
+        </activity>
+        <activity
+            android:name="com.framgia.fels.activities.HomeActivity"
+            android:label="@string/title_activity_home" >
+        </activity>
+        <activity
+            android:name="com.framgia.fels.activities.CategoryActivity"
+            android:label="@string/title_activity_category" >
         </activity>
     </application>
 

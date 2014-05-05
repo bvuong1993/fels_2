@@ -4,5 +4,9 @@
     <string name="app_name">fels</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="title_activity_home">Home</string>
+    <string name="to_words_button_name">Words</string>
+    <string name="to_lesson_button_name">Lesson</string>
+    <string name="title_activity_category">Category</string>
 
 </resources>
