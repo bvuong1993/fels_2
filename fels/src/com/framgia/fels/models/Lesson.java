@@ -5,8 +5,17 @@ import java.util.Date;
 public class Lesson {
 	private int id;
 	private User user;
-	private String date;	
+	private String date;
+	private Category category;
 	
+	
+	
+	public Category getCategory() {
+		return category;
+	}
+	public void setCategory(Category category) {
+		this.category = category;
+	}
 	public int getId() {
 		return id;
 	}

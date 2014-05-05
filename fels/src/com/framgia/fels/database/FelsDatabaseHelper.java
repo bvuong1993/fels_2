@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.framgia.fels.models.Category;
 import com.framgia.fels.models.Lesson;
 import com.framgia.fels.models.User;
 import com.framgia.fels.utils.Variables;
@@ -66,7 +67,8 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		db.execSQL("create table " + Variables.TABLE_LESSONS+ "( "
 				+ Variables.COLUMN_LESSONS_ID + " integer primary key " + ", "
 				+ Variables.COLUMN_LESSONS_USER_ID +  " integer" + ", "
-				+ Variables.COLUMN_LESSONS_DATE + " text"				
+				+ Variables.COLUMN_LESSONS_DATE + " text" + ", "			
+				+ Variables.COLUMN_LESSONS_CATEGORY_ID +  " integer"
 				+ " ) "
 				);
 		
@@ -144,12 +146,13 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 	    return true;
 	}
 	
-	public boolean insertLessons( int id, int userId, String date ){
+	public boolean insertLessons( int id, int userId, String date, int categoryId ){
 		SQLiteDatabase db = this.getWritableDatabase();
 	    ContentValues contentValues = new ContentValues();
 	    contentValues.put(Variables.COLUMN_LESSONS_ID, id);
 	    contentValues.put(Variables.COLUMN_LESSONS_USER_ID, userId);
 	    contentValues.put(Variables.COLUMN_LESSONS_DATE, date);
+	    contentValues.put(Variables.COLUMN_LESSONS_CATEGORY_ID, categoryId);
 	    db.insert(Variables.TABLE_LESSONS, null, contentValues);
 	    return true;
 	}
@@ -209,6 +212,7 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 			lesson.setUser(_user);
 			lesson.setDate(res.getString(res.getColumnIndex(Variables.COLUMN_LESSONS_DATE)));
 			lesson.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_ID)));
+		
 			lessonList.add(lesson);
 			
 		} while(res.moveToNext()); 
@@ -219,6 +223,63 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		
 		return lessonList;
 	}
+	
+	
+	public List<Lesson> getLessonListForUser(User user){
+		
+		List<Lesson> lessonList = new ArrayList<Lesson>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		int userId = user.getId();
+		List<User> userList = new ArrayList<User>();
+		
+		Cursor res =  db.rawQuery( "select * from " + Variables.TABLE_LESSONS + " where " + Variables.COLUMN_LESSONS_USER_ID + " = " + user.getId(), null );
+	//	System.out.println(res.getCount()+"AAAAAAAAAAA");
+		res.moveToFirst();
+		
+		if(res.getCount() > 0)
+		do{
+			Lesson lesson = new Lesson();
+			lesson.setUser(user);
+			lesson.setDate(res.getString(res.getColumnIndex(Variables.COLUMN_LESSONS_DATE)));
+			lesson.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_ID)));
+			
+			Cursor res1 = db.rawQuery("select * from " + Variables.TABLE_CATEGORIES + " where " + Variables.COLUMN_CATEGORIES_ID + " = " + res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_CATEGORY_ID)), null);
+			res1.moveToFirst();
+			Category category = new Category();
+			category.setCategoryId(res1.getInt(res1.getColumnIndex(Variables.COLUMN_CATEGORIES_ID)));
+			category.setCategoryName(res1.getString(res1.getColumnIndex(Variables.COLUMN_CATEGORIES_NAME)));
+			lesson.setCategory(category);
+			
+			
+			/*
+			User _user = new User();
+			
+			Cursor res1 =  db.rawQuery( "select * from " + Variables.TABLE_USERS + " where " + Variables.COLUMN_USERS_ID + " = " + res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_USER_ID)), null );
+			res1.moveToFirst();
+			if( res1.getCount() > 0)
+			do{
+				_user.setId(res1.getInt(res1.getColumnIndex(Variables.COLUMN_USERS_ID)));
+				_user.setName(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_NAME)));
+				_user.setAvatar(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_AVATAR)));
+				_user.setEmail(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_EMAIL)));
+				_user.setPassword(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_NAME)));
+			} while(res1.moveToNext());
+			
+			lesson.setDate(res.getString(res.getColumnIndex(Variables.COLUMN_LESSONS_DATE)));
+			lesson.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_ID)));
+			*/
+			lessonList.add(lesson);
+			
+		} while(res.moveToNext()); 
+		
+		
+		
+		
+		
+		return lessonList;
+	}
+	
+	
 	
 	public User getUser(int id){
 		User result = new User();
