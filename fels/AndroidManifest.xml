@@ -36,6 +36,10 @@
         <activity
             android:name="com.framgia.fels.activities.ShowUserDetailActivity">
         </activity>
+        
+        <activity 
+            android:name="com.framgia.fels.activities.WordListActivity">
+        </activity>
     </application>
 
 </manifest>

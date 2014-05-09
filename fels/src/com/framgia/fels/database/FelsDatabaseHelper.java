@@ -8,11 +8,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import com.framgia.fels.models.Category;
 import com.framgia.fels.models.Lesson;
 import com.framgia.fels.models.User;
+import com.framgia.fels.models.Word;
 import com.framgia.fels.utils.Variables;
 
 public class FelsDatabaseHelper extends SQLiteOpenHelper{
@@ -212,7 +212,14 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 			lesson.setUser(_user);
 			lesson.setDate(res.getString(res.getColumnIndex(Variables.COLUMN_LESSONS_DATE)));
 			lesson.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_ID)));
-		
+			
+			Cursor res2 =  db.rawQuery( "select * from " + Variables.TABLE_CATEGORIES + " where " + Variables.COLUMN_CATEGORIES_ID + " = " + res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_CATEGORY_ID)), null );
+			res2.moveToFirst();
+			Category category = new Category();
+			category.setCategoryId(res2.getInt(res2.getColumnIndex(Variables.COLUMN_CATEGORIES_ID)));
+			category.setCategoryName(res2.getString(res2.getColumnIndex(Variables.COLUMN_CATEGORIES_NAME)));
+			lesson.setCategory(category);
+			
 			lessonList.add(lesson);
 			
 		} while(res.moveToNext()); 
@@ -298,4 +305,39 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		} while(res.moveToNext());
 		else return null;
 	}
+	
+	
+	/*SUa String --> category sau*/
+	public List<String> getCategoryList(){
+		List<String> categoryList = new ArrayList<String>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res = db.rawQuery("select * from " + Variables.TABLE_CATEGORIES, null);
+		res.moveToFirst();
+		if( res.getCount() > 0)
+			do{
+				String category = res.getString(res.getColumnIndex(Variables.COLUMN_CATEGORIES_NAME));
+				categoryList.add(category);
+			} while(res.moveToNext());
+		return categoryList;
+	}
+	
+	
+	
+	public List<Word> getWordList( String category){
+		List<Word> wordList = new ArrayList<Word>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res = db.rawQuery("select * from " + Variables.TABLE_WORDS + " inner join categories on " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_CATEGORY_ID 
+				+ " = " + Variables.TABLE_CATEGORIES + "." + Variables.COLUMN_CATEGORIES_ID + " where " + Variables.TABLE_CATEGORIES+ "." + Variables.COLUMN_CATEGORIES_NAME + " = '" + category +"'", null);
+		res.moveToFirst();
+		if( res.getCount() > 0)
+			do{
+				Word word = new Word();
+				word.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_WORDS_ID)));
+				word.setJpWord(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_JP_WORD)));
+				word.setVnMeaning(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_VN_MEANING)));
+				wordList.add(word);
+			} while(res.moveToNext());
+		return wordList;
+	}
+	
 }
