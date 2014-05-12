@@ -2,11 +2,38 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        
+        <ImageView 
+            android:id="@+id/avatar_image"
+        	android:layout_height="50dp"
+        	android:layout_width="50dp"
+        	android:background="@drawable/avatar_background"/>
+        
+        <TextView
+            android:id="@+id/tv_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+        
+        <TextView
+            android:id="@+id/tv_learned_words_count"
+            android:layout_weight="1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+            
+            
+    </LinearLayout>
+    
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Activities" />
+        android:text="Activities" 
+        android:gravity="center"
+        android:textStyle="bold"/>
     <ListView 
         android:id="@+id/lesson_listview"
         android:layout_width="match_parent"

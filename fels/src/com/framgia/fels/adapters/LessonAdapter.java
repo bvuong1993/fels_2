@@ -63,7 +63,8 @@ public class LessonAdapter extends BaseAdapter{
 			convertView.setTag(viewHolder);
 		} else viewHolder = (ViewHolder) convertView.getTag();	
 			
-		viewHolder.imageView.setBackgroundResource(R.drawable.ic_launcher);
+		viewHolder.imageView.setImageResource(R.drawable.ic_launcher);
+		
 		viewHolder.textView.setText("Learned 20 words in Lesson \"" + entry.getCategory().getCategoryName() + "\" - (" + entry.getDate() + ")");
 		return convertView;
 	}

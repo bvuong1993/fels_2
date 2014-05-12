@@ -45,7 +45,7 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 				+ Variables.COLUMN_WORDS_ID + " integer primary key " + ", "
 				+ Variables.COLUMN_WORDS_JP_WORD +  " text" + ", "
 				+ Variables.COLUMN_WORDS_VN_MEANING + " text" + ", "
-				+ Variables.COLUMN_WORDS_RESULT_ID+ " integer" + ", "
+				+ Variables.COLUMN_WORDS_RIGHT_CHOICE_ID+ " integer" + ", "
 				+ Variables.COLUMN_WORDS_SOUND+ " text" + ", "
 				+ Variables.COLUMN_WORDS_CATEGORY_ID + " integer "
 				+ " ) "
@@ -120,7 +120,7 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 	    contentValues.put(Variables.COLUMN_WORDS_ID, wordId);
 	    contentValues.put(Variables.COLUMN_WORDS_JP_WORD, jpWord);
 	    contentValues.put(Variables.COLUMN_WORDS_VN_MEANING, vnMeaning);
-	    contentValues.put(Variables.COLUMN_WORDS_RESULT_ID, resultId);
+	    contentValues.put(Variables.COLUMN_WORDS_RIGHT_CHOICE_ID, resultId);
 	    contentValues.put(Variables.COLUMN_WORDS_SOUND, sound);
 	    contentValues.put(Variables.COLUMN_WORDS_CATEGORY_ID, categoryId);
 	    db.insert(Variables.TABLE_WORDS, null, contentValues);
@@ -240,7 +240,7 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		List<User> userList = new ArrayList<User>();
 		
 		Cursor res =  db.rawQuery( "select * from " + Variables.TABLE_LESSONS + " where " + Variables.COLUMN_LESSONS_USER_ID + " = " + user.getId(), null );
-	//	System.out.println(res.getCount()+"AAAAAAAAAAA");
+		
 		res.moveToFirst();
 		
 		if(res.getCount() > 0)
@@ -252,29 +252,34 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 			
 			Cursor res1 = db.rawQuery("select * from " + Variables.TABLE_CATEGORIES + " where " + Variables.COLUMN_CATEGORIES_ID + " = " + res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_CATEGORY_ID)), null);
 			res1.moveToFirst();
+			System.out.println(res1.getCount()+"ZZZZZZZZZZZZZZZZZZZZZZZZ");
 			Category category = new Category();
 			category.setCategoryId(res1.getInt(res1.getColumnIndex(Variables.COLUMN_CATEGORIES_ID)));
 			category.setCategoryName(res1.getString(res1.getColumnIndex(Variables.COLUMN_CATEGORIES_NAME)));
 			lesson.setCategory(category);
 			
 			
-			/*
+			
 			User _user = new User();
 			
-			Cursor res1 =  db.rawQuery( "select * from " + Variables.TABLE_USERS + " where " + Variables.COLUMN_USERS_ID + " = " + res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_USER_ID)), null );
-			res1.moveToFirst();
-			if( res1.getCount() > 0)
+			Cursor res2 =  db.rawQuery( "select * from " + Variables.TABLE_USERS + " where " + Variables.COLUMN_USERS_ID + " = " + res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_USER_ID)), null );
+			res2.moveToFirst();
+			if( res2.getCount() > 0)
 			do{
-				_user.setId(res1.getInt(res1.getColumnIndex(Variables.COLUMN_USERS_ID)));
-				_user.setName(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_NAME)));
-				_user.setAvatar(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_AVATAR)));
-				_user.setEmail(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_EMAIL)));
-				_user.setPassword(res1.getString(res1.getColumnIndex(Variables.COLUMN_USERS_NAME)));
-			} while(res1.moveToNext());
+				_user.setId(res2.getInt(res2.getColumnIndex(Variables.COLUMN_USERS_ID)));
+				_user.setName(res2.getString(res2.getColumnIndex(Variables.COLUMN_USERS_NAME)));
+				_user.setAvatar(res2.getString(res2.getColumnIndex(Variables.COLUMN_USERS_AVATAR)));
+				_user.setEmail(res2.getString(res2.getColumnIndex(Variables.COLUMN_USERS_EMAIL)));
+				_user.setPassword(res2.getString(res2.getColumnIndex(Variables.COLUMN_USERS_NAME)));
+				lesson.setUser(_user);
+			} while(res2.moveToNext());
 			
+			/*
 			lesson.setDate(res.getString(res.getColumnIndex(Variables.COLUMN_LESSONS_DATE)));
 			lesson.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_LESSONS_ID)));
 			*/
+			
+			
 			lessonList.add(lesson);
 			
 		} while(res.moveToNext()); 
@@ -340,4 +345,64 @@ public class FelsDatabaseHelper extends SQLiteOpenHelper{
 		return wordList;
 	}
 	
+	public List<Word> getLearnedWordList( String category, User user){
+		List<Word> wordList = new ArrayList<Word>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res = db.rawQuery("select * from " + Variables.TABLE_LESSONS 
+				+ " inner join " + Variables.TABLE_LESSON_RESULTS + " on " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_ID + " = " + Variables.TABLE_LESSON_RESULTS + "." + Variables.COLUMN_LESSON_RESULTS_ID
+				+ " inner join " + Variables.TABLE_WORDS + " on " + Variables.TABLE_LESSON_RESULTS + "." + Variables.COLUMN_LESSON_RESULTS_WORD_ID + " = " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_ID
+				+ " inner join " + Variables.TABLE_CATEGORIES + " on " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_CATEGORY_ID + " = " + Variables.TABLE_CATEGORIES + "." + Variables.COLUMN_CATEGORIES_ID
+				+ " where " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_USER_ID + " = '" + user.getId() + "' " 
+				+ " and " + Variables.TABLE_CATEGORIES+ "." + Variables.COLUMN_CATEGORIES_NAME + " = '" + category +"'"
+				+ " and " + Variables.TABLE_LESSON_RESULTS + "." + Variables.COLUMN_LESSON_RESULTS_CHOICE_ID + " = " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_RIGHT_CHOICE_ID
+				, null);
+		res.moveToFirst();
+		if( res.getCount() > 0)
+			do{
+				Word word = new Word();
+				word.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_WORDS_ID)));
+				word.setJpWord(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_JP_WORD)));
+				word.setVnMeaning(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_VN_MEANING)));
+				wordList.add(word);
+			} while(res.moveToNext());
+		return wordList;
+	}
+	
+	
+	public List<Word> getNotLearnedWordList( String category, User user){
+		List<Word> wordList = new ArrayList<Word>();
+		SQLiteDatabase db = this.getReadableDatabase();
+		
+		Cursor res = db.rawQuery("select * from " + Variables.TABLE_WORDS 
+				+ " inner join " + Variables.TABLE_CATEGORIES + " on " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_CATEGORY_ID + " = " + Variables.TABLE_CATEGORIES + "." + Variables.COLUMN_CATEGORIES_ID
+				+ " where " + Variables.TABLE_CATEGORIES + "." + Variables.COLUMN_CATEGORIES_NAME + " = '" + category +"'"
+				+ " and " + Variables.TABLE_WORDS +"." + Variables.COLUMN_WORDS_ID +" NOT IN ( select " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_ID+ " from " + Variables.TABLE_LESSONS 
+				+ " inner join " + Variables.TABLE_LESSON_RESULTS + " on " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_ID + " = " + Variables.TABLE_LESSON_RESULTS + "." + Variables.COLUMN_LESSON_RESULTS_ID
+				+ " inner join " + Variables.TABLE_WORDS + " on " + Variables.TABLE_LESSON_RESULTS + "." + Variables.COLUMN_LESSON_RESULTS_WORD_ID + " = " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_ID
+				+ " inner join " + Variables.TABLE_CATEGORIES + " on " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_CATEGORY_ID + " = " + Variables.TABLE_CATEGORIES + "." + Variables.COLUMN_CATEGORIES_ID
+				+ " where " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_USER_ID + " = '" + user.getId() + "' " 
+				+ " and " + Variables.TABLE_CATEGORIES+ "." + Variables.COLUMN_CATEGORIES_NAME + " = '" + category +"'"
+				+ " and " + Variables.TABLE_LESSON_RESULTS + "." + Variables.COLUMN_LESSON_RESULTS_CHOICE_ID + " = " + Variables.TABLE_WORDS + "." + Variables.COLUMN_WORDS_RIGHT_CHOICE_ID +")"
+				, null);
+		System.out.println("TEST"+ res.getCount());
+		res.moveToFirst();
+		if( res.getCount() > 0)
+			do{
+				Word word = new Word();
+				word.setId(res.getInt(res.getColumnIndex(Variables.COLUMN_WORDS_ID)));
+				word.setJpWord(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_JP_WORD)));
+				word.setVnMeaning(res.getString(res.getColumnIndex(Variables.COLUMN_WORDS_VN_MEANING)));
+				wordList.add(word);
+			} while(res.moveToNext());
+		return wordList;
+	}
+	
+	public int getLearnedWordCounts(User user){
+		SQLiteDatabase db = this.getReadableDatabase();
+		Cursor res = db.rawQuery("select " + Variables.TABLE_LESSON_RESULTS + "."+ Variables.COLUMN_LESSON_RESULTS_WORD_ID + " from " + Variables.TABLE_LESSON_RESULTS
+				+ " inner join " + Variables.TABLE_LESSONS + " on " + Variables.TABLE_LESSON_RESULTS + "." +  Variables.COLUMN_LESSON_RESULTS_ID + " = " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_ID
+				+ " where " + Variables.TABLE_LESSONS + "." + Variables.COLUMN_LESSONS_USER_ID + " = '" + user.getId() + "'", null);
+		//res.moveToFirst();
+		return res.getCount();
+	}
 }

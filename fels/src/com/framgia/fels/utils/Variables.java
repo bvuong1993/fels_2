@@ -35,7 +35,7 @@ public class Variables {
 	public static final String COLUMN_WORDS_ID = "id";
 	public static final String COLUMN_WORDS_JP_WORD = "jp_word";
 	public static final String COLUMN_WORDS_VN_MEANING = "vn_meaning";
-	public static final String COLUMN_WORDS_RESULT_ID = "result_id";
+	public static final String COLUMN_WORDS_RIGHT_CHOICE_ID = "result_id";
 	public static final String COLUMN_WORDS_SOUND = "sound";
 	public static final String COLUMN_WORDS_CATEGORY_ID = "category_id";
 	
