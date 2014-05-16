@@ -14,7 +14,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		Intent i = new Intent(this, WordListActivity.class);
+		Intent i = new Intent(this, ShowUserDetailActivity.class);
 		startActivity(i);
 
 		// Intent intent = new Intent(this, HomeActivity.class);
